@@ -1,0 +1,13 @@
+# Obsidian RAG Skill — Python Dependencies
+# Install: pip install -r requirements.txt
+
+# Core
+python-frontmatter>=1.1.0      # YAML frontmatter parsing/writing
+platformdirs>=2.5.0            # Platform-specific user dirs
+
+# RAG — Embeddings + Vector Store
+fastembed==0.7.4               # FastEmbed embeddings
+lancedb==0.25.3                # LanceDB vector database
+
+# CLI framework
+click>=8.1.7                   # CLI commands

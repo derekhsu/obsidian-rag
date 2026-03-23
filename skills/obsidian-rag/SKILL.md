@@ -1,0 +1,131 @@
+---
+name: "obsidian-rag"
+description: "Expert skill for managing Obsidian vaults, indexing notes for RAG, and performing semantic searches. Provides tools for reading, writing, and searching notes with automated vector indexing."
+---
+
+# obsidian-rag — Obsidian Vault Management & RAG Skill
+
+**Category:** knowledge-management / note-taking / semantic-search
+**Language:** Python 3.9–3.12
+**Runtime:** uv (dependencies locked via `pyproject.toml`)
+**License:** MIT
+
+## What It Does
+
+Provides 16 tools for Obsidian vault management (read, write, search, link analysis, frontmatter) plus a full RAG pipeline (LanceDB + FastEmbed embeddings) for semantic search over your notes.
+
+## Setup
+
+When using this skill for the first time, ensure `uv` is installed. Run from the project root:
+
+```bash
+uv sync        # installs all dependencies into .venv/
+```
+
+On first run, uv will download and cache all packages. Subsequent calls are instant.
+
+## Tools
+
+### Vault Navigation & Read
+
+| Tool | Description |
+|------|-------------|
+| `list_notes` | List markdown files in vault (optional subfolder filter) |
+| `read_note` | Read full content of a note |
+| `search_notes` | Full-text search across all notes (filename + content) |
+
+### Note Writing
+
+| Tool | Description |
+|------|-------------|
+| `create_note` | Create a new note with content |
+| `append_note` | Append text to end of existing note |
+| `get_daily_note` | Get or auto-create today's daily note |
+| `append_daily_log` | Append timestamped entry under a heading in daily note |
+| `move_note` | Move or rename a note |
+
+### Wikilink Analysis
+
+| Tool | Description |
+|------|-------------|
+| `get_backlinks` | Find all notes linking to a target note |
+| `get_links` | Extract all outgoing wikilinks from a note |
+| `get_broken_links` | Find wikilinks pointing to non-existent notes |
+
+### Content Editing
+
+| Tool | Description |
+|------|-------------|
+| `update_frontmatter` | Update YAML frontmatter (single key or batch JSON) |
+| `replace_section` | Replace body under a heading (preserves heading line) |
+| `replace_in_note` | Replace first occurrence of text in a note |
+
+### RAG (Semantic Search)
+
+| Tool | Description |
+|------|-------------|
+| `rag_index` | Index vault for semantic search (incremental by default) |
+| `rag_query` | Semantic search on indexed vault |
+
+## Usage
+
+```bash
+# Via wrapper script (recommended)
+./obsidian_rag list_notes
+./obsidian_rag read_note "Daily Notes/2024-01-01.md"
+./obsidian_rag search_notes "meeting notes"
+./obsidian_rag rag_index
+./obsidian_rag rag_query "what did I decide about the project?"
+
+# Via uv directly
+uv run obsidian-rag list_notes
+uv run obsidian-rag get_backlinks "Project Alpha"
+uv run obsidian-rag append_daily_log "Work Log" "Finished the API integration"
+
+# Reindex vault
+python scripts/reindex.py /path/to/vault
+python scripts/reindex.py /path/to/vault --force   # full rebuild
+python scripts/reindex.py /path/to/vault --watch  # watch mode
+```
+
+## Technical Details
+
+### RAG Pipeline
+- **Embedding model:** `BAAI/bge-small-zh-v1.5` (512-dim, FastEmbed)
+- **Vector store:** LanceDB (local, zero-config)
+- **Chinese chunking:** Splits on `。！？；：.!?:;,`, merges up to target size
+
+### Defaults
+- Chunk size: 40–1800 chars, target 700 chars
+- Embed batch size: 8 (memory-efficient)
+- Incremental indexing via MD5 file hashes
+
+### Config Files
+- `~/.config/obsidian-rag/config.json` — vault path
+- `~/.local/share/obsidian-rag/lancedb/` — vector database
+- `~/.local/share/obsidian-rag/file_hashes.json` — incremental index hashes
+
+## Requirements (locked versions)
+
+```
+fastembed==0.7.4
+lancedb==0.25.3
+onnxruntime==1.19.2
+python-frontmatter>=1.1.0
+click>=8.1.7
+platformdirs>=2.5.0
+```
+
+## Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `OBSIDIAN_VAULT_PATH` | Default vault path (overridden by `--vault-path`) |
+
+## OpenClaw / AI Agent Integration
+
+Each tool maps to a CLI subcommand. The agent invokes:
+
+```bash
+uv run obsidian-rag <tool> [options]
+```
