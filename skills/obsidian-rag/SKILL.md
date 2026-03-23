@@ -100,10 +100,16 @@ python scripts/reindex.py /path/to/vault --watch  # watch mode
 - Embed batch size: 8 (memory-efficient)
 - Incremental indexing via MD5 file hashes
 
-### Config Files
-- `~/.config/obsidian-rag/config.json` — vault path
-- `~/.local/share/obsidian-rag/lancedb/` — vector database
-- `~/.local/share/obsidian-rag/file_hashes.json` — incremental index hashes
+### Config Files & Storage
+Paths are OS-dependent (managed via `platformdirs`):
+- **macOS:** `~/Library/Application Support/obsidian-rag/`
+- **Linux:** `~/.config/obsidian-rag/` (config) and `~/.local/share/obsidian-rag/` (data)
+- **Windows:** `%LOCALAPPDATA%\openclaw\obsidian-rag\`
+
+Stored files include:
+- `config.json` — Vault path configuration.
+- `lancedb/` — Vector database directory.
+- `file_hashes.json` — Incremental index hashes.
 
 ## Requirements (locked versions)
 
