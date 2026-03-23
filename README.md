@@ -4,15 +4,18 @@ Chinese-optimized Obsidian vault manager with LanceDB + FastEmbed semantic searc
 
 ## Installation
 
+### Via Gemini CLI (Recommended)
+
 ```bash
-cd ~/.openclaw/workspace/skills/obsidian-rag
-pip3 install -r requirements.txt
+npx skills add https://github.com/derekhsu/obsidian-rag
 ```
 
-Or install in development mode:
+### Manual Installation (Development)
 
 ```bash
-pip3 install -e .
+git clone https://github.com/derekhsu/obsidian-rag
+cd obsidian-rag
+uv sync
 ```
 
 ## Quick Start
