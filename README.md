@@ -1,64 +1,45 @@
-# obsidian-rag — Obsidian RAG Skill for OpenClaw
+# obsidian-rag — Obsidian RAG Agent Skill
 
-Chinese-optimized Obsidian vault manager with LanceDB + FastEmbed semantic search.
+An AI agent skill for managing Obsidian vaults, featuring Chinese-optimized text chunking and LanceDB + FastEmbed semantic search.
 
 ## Installation
 
-### Via Gemini CLI (Recommended)
+Install via the standard agent skills CLI (`npx skills`), regardless of which specific AI agent environment you are using:
 
 ```bash
-npx skills add https://github.com/derekhsu/obsidian-rag
+npx skills add derekhsu/obsidian-rag@obsidian-rag
+# Or via full repository URL:
+# npx skills add https://github.com/derekhsu/obsidian-rag@obsidian-rag
 ```
 
-### Manual Installation (Development)
+Once installed by your AI agent, the skill handles setting up its own Python environment via `uv`.
 
-```bash
-git clone https://github.com/derekhsu/obsidian-rag
-cd obsidian-rag
-uv sync
+## Architecture
+
+This project is structured as a self-contained AI agent skill, conforming to the standard `agent-skills` specification. All execution logic, metadata, and dependencies are encapsulated in the `skills/obsidian-rag/` directory to ensure perfect portability.
+
+```text
+obsidian-rag/
+└── skills/
+    └── obsidian-rag/
+        ├── SKILL.md            # Agent instructions and metadata
+        ├── pyproject.toml      # Python dependencies (managed by uv)
+        ├── uv.lock             # Dependency lockfile
+        ├── scripts/
+        │   └── reindex.py      # Background/Incremental reindexing script
+        └── src/
+            └── obsidian_rag/   # Core Python package
+                ├── main.py     # CLI entry point (16 tools)
+                ├── utils.py    # Wikilink, frontmatter, section utils
+                ├── chunking.py # Chinese-optimized text chunking
+                └── vector_store.py # LanceDB + FastEmbed RAG engine
 ```
 
-## Quick Start
+## Agent Usage & Tools
 
-```bash
-# 1. Set your vault path (saved to ~/.config/obsidian-rag/config.json)
-python3 -m obsidian_rag.main set_vault /path/to/your/vault
+Once the skill is activated, the agent manages execution by running `uv run` within the `skills/obsidian-rag` directory.
 
-# 2. Index the vault for semantic search
-python3 -m obsidian_rag.main rag_index
-
-# 3. Search semantically
-python3 -m obsidian_rag.main rag_query "what did I discuss about the API?"
-
-# 4. Browse notes
-python3 -m obsidian_rag.main list_notes
-python3 -m obsidian_rag.main read_note "Projects/Demo.md"
-
-# 5. Write notes
-python3 -m obsidian_rag.main create_note "Ideas/NewIdea.md" --content "# New Idea\n\n..."
-python3 -m obsidian_rag.main append_note "Ideas/NewIdea.md" --content "\n- Another point"
-
-# 6. Daily notes
-python3 -m obsidian_rag.main append_daily_log "Work Log" "Finished the integration"
-```
-
-## Incremental Reindex
-
-The `scripts/reindex.py` script provides advanced reindexing:
-
-```bash
-# Normal incremental reindex
-python3 scripts/reindex.py /path/to/vault
-
-# Full rebuild (ignores cached hashes)
-python3 scripts/reindex.py /path/to/vault --force
-
-# Watch mode (re-index changed files automatically)
-python3 scripts/reindex.py /path/to/vault --watch
-pip3 install watchdog  # required for --watch
-```
-
-## All Tools
+### Available Tools
 
 | Command | Description |
 |---------|-------------|
@@ -81,33 +62,28 @@ pip3 install watchdog  # required for --watch
 | `rag_index [--file PATH] [--force]` | Index for RAG |
 | `rag_query QUERY [--limit N]` | Semantic search |
 
-## Architecture
+## Configuration & Storage
 
-```
-obsidian-rag/
-├── SKILL.md            # This file — skill metadata
-├── README.md           # Installation & usage guide
-├── requirements.txt    # Python dependencies
-├── config.py           # Configuration & vault path
-├── main.py             # CLI entry point (16 tools)
-├── utils.py            # Wikilink, frontmatter, section utils
-├── chunking.py         # Chinese-optimized text chunking
-├── vector_store.py     # LanceDB + FastEmbed RAG engine
-└── scripts/
-    └── reindex.py      # Incremental reindex script
-```
+Storage paths are OS-dependent (managed via `platformdirs`):
 
-## Configuration
-
-| File | Location | Purpose |
+| File | Location (macOS example) | Purpose |
 |------|----------|---------|
-| Config | `~/.config/obsidian-rag/config.json` | Vault path |
+| Config | `~/Library/Application Support/obsidian-rag/config.json` | Vault path |
 | Vector DB | `~/.local/share/obsidian-rag/lancedb/` | LanceDB data |
-| Hash cache | `~/.local/share/obsidian-rag/file_hashes.json` | Incremental index |
+| Hash cache | `~/.local/share/obsidian-rag/file_hashes.json` | Incremental index caching |
 
-## Tech Stack
+## Manual Development
 
-- **Chunking:** Chinese punctuation (`。！？；：`) + ASCII punctuation
-- **Embedding:** FastEmbed + `BAAI/bge-small-zh-v1.5` (512-dim)
-- **Vector store:** LanceDB (local, embedded)
-- **Python:** 3.9+
+If you wish to develop or test this skill locally:
+
+```bash
+git clone https://github.com/derekhsu/obsidian-rag.git
+cd obsidian-rag/skills/obsidian-rag
+uv sync
+
+# Run tools
+uv run python -m obsidian_rag list_notes
+
+# Reindex vault
+python scripts/reindex.py /path/to/vault
+```
