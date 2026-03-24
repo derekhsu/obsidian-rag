@@ -16,9 +16,10 @@ Provides 16 tools for Obsidian vault management (read, write, search, link analy
 
 ## Setup
 
-When using this skill for the first time, ensure `uv` is installed. Run from the project root:
+When using this skill for the first time, ensure `uv` is installed. Run from the skill directory:
 
 ```bash
+cd skills/obsidian-rag
 uv sync        # installs all dependencies into .venv/
 ```
 
@@ -70,22 +71,14 @@ On first run, uv will download and cache all packages. Subsequent calls are inst
 ## Usage
 
 ```bash
-# Via wrapper script (recommended)
-./obsidian_rag list_notes
-./obsidian_rag read_note "Daily Notes/2024-01-01.md"
-./obsidian_rag search_notes "meeting notes"
-./obsidian_rag rag_index
-./obsidian_rag rag_query "what did I decide about the project?"
+# Via uv directly (from skill directory)
+cd skills/obsidian-rag
+uv run python -m obsidian_rag list_notes
+uv run python -m obsidian_rag get_backlinks "Project Alpha"
+uv run python -m obsidian_rag append_daily_log "Work Log" "Finished the API integration"
 
-# Via uv directly
-uv run obsidian-rag list_notes
-uv run obsidian-rag get_backlinks "Project Alpha"
-uv run obsidian-rag append_daily_log "Work Log" "Finished the API integration"
-
-# Reindex vault
+# Reindex vault (using reindex script)
 python skills/obsidian-rag/scripts/reindex.py /path/to/vault
-python skills/obsidian-rag/scripts/reindex.py /path/to/vault --force   # full rebuild
-python skills/obsidian-rag/scripts/reindex.py /path/to/vault --watch  # watch mode
 ```
 
 ## Technical Details
@@ -133,5 +126,5 @@ platformdirs>=2.5.0
 Each tool maps to a CLI subcommand. The agent invokes:
 
 ```bash
-uv run obsidian-rag <tool> [options]
+cd skills/obsidian-rag && uv run python -m obsidian_rag <tool> [options]
 ```

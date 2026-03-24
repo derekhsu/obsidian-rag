@@ -24,8 +24,8 @@ import os
 import sys
 from pathlib import Path
 
-# Ensure the skill package is importable
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+# Ensure the skill package is importable (pointing to ../src)
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from obsidian_rag.vector_store import VaultIndexer
 from obsidian_rag.config import config
