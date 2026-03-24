@@ -10,6 +10,8 @@ description: "Expert skill for managing Obsidian vaults, indexing notes for RAG,
 **Runtime:** uv (dependencies locked via `pyproject.toml`)
 **License:** MIT
 
+**Acknowledgment:** This project is inspired by [gemini-obsidian](https://github.com/thoreinstein/gemini-obsidian).
+
 ## What It Does
 
 Provides 16 tools for Obsidian vault management (read, write, search, link analysis, frontmatter) plus a full RAG pipeline (LanceDB + FastEmbed embeddings) for semantic search over your notes.

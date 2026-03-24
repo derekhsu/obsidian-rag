@@ -2,6 +2,8 @@
 
 An AI agent skill for managing Obsidian vaults, featuring Chinese-optimized text chunking and LanceDB + FastEmbed semantic search.
 
+**Acknowledgment:** This project is inspired by [gemini-obsidian](https://github.com/thoreinstein/gemini-obsidian).
+
 ## Installation
 
 Install via the standard agent skills CLI (`npx skills`), regardless of which specific AI agent environment you are using:
