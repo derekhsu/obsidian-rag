@@ -83,9 +83,9 @@ uv run obsidian-rag get_backlinks "Project Alpha"
 uv run obsidian-rag append_daily_log "Work Log" "Finished the API integration"
 
 # Reindex vault
-python scripts/reindex.py /path/to/vault
-python scripts/reindex.py /path/to/vault --force   # full rebuild
-python scripts/reindex.py /path/to/vault --watch  # watch mode
+python skills/obsidian-rag/scripts/reindex.py /path/to/vault
+python skills/obsidian-rag/scripts/reindex.py /path/to/vault --force   # full rebuild
+python skills/obsidian-rag/scripts/reindex.py /path/to/vault --watch  # watch mode
 ```
 
 ## Technical Details
